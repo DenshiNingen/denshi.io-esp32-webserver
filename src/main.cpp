@@ -22,12 +22,6 @@ void blinkRed() {
   pixel.show();
 }
 
-// Custom handler for the homepage
-void handleHomePage(AsyncWebServerRequest *request) {
-  blinkRed();
-  request->send(LittleFS, "/index.html", "text/html");
-}
-
 void notFound(AsyncWebServerRequest *request) {
   if (request->method() == HTTP_OPTIONS) {
     request->send(200);
@@ -72,6 +66,12 @@ void setup() {
   // Serve static files
   server.on("/", HTTP_GET, handleHomePage);
   server.serveStatic("/static/", LittleFS, "/");
+
+  // Blink when homepage is requested
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    blinkRed();
+    request->send(LittleFS, "/index.html", "text/html");
+  });
 
   server.onNotFound(notFound);
 
