@@ -64,14 +64,14 @@ void setup() {
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "Content-Type");
 
   // Serve static files
-  server.on("/", HTTP_GET, handleHomePage);
+  server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
   server.serveStatic("/static/", LittleFS, "/");
 
-  // Blink when homepage is requested
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    blinkRed();
-    request->send(LittleFS, "/index.html", "text/html");
-  });
+  // // Blink when homepage is requested
+  // server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+  //   blinkRed();
+  //   request->send(LittleFS, "/index.html", "text/html");
+  // });
 
   server.onNotFound(notFound);
 
