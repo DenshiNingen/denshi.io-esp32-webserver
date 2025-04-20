@@ -19,10 +19,9 @@ Adafruit_NeoPixel pixel(NUM_PIXELS, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 bool isBlinking = false;
 unsigned long blinkStartTime = 0;
 
-// Start blinking red
-void blinkRed() {
-  Serial.println("[BLINK] Starting red blink...");
-  pixel.setPixelColor(0, pixel.Color(255, 0, 0)); // Red
+void blinkColor(uint8_t r, uint8_t g, uint8_t b) {
+  Serial.printf("[BLINK] Starting blink color (R:%d G:%d B:%d)...\n", r, g, b);
+  pixel.setPixelColor(0, pixel.Color(r, g, b));
   pixel.show();
   isBlinking = true;
   blinkStartTime = millis();
@@ -31,6 +30,7 @@ void blinkRed() {
 // 404 or OPTIONS handler
 void notFound(AsyncWebServerRequest *request) {
   Serial.printf("[404] Not found: %s\n", request->url().c_str());
+  blinkColor(255, 0, 0); // RED for error
   if (request->method() == HTTP_OPTIONS) {
     request->send(200);
   } else {
@@ -82,7 +82,7 @@ void setup() {
   // Special handler for "/"
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("[HTTP] GET / (root)");
-    blinkRed();
+    blinkColor(0, 255, 0); // GREEN for OK
     request->send(LittleFS, "/index.html", "text/html");
   });
   Serial.println("[SERVER] Global request handler added");
@@ -97,7 +97,7 @@ void setup() {
 
 void loop() {
   if (isBlinking && millis() - blinkStartTime >= 1000) {
-    Serial.println("[BLINK] Ending red blink...");
+    Serial.println("[BLINK] Ending blink...");
     pixel.clear();
     pixel.show();
     isBlinking = false;
