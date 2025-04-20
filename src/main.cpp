@@ -102,4 +102,5 @@ void loop() {
     pixel.show();
     isBlinking = false;
   }
+  delay(1); // Small delay to avoid blocking
 }
